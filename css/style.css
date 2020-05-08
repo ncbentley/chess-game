@@ -1,0 +1,25 @@
+:root {
+  /* Board Colors */
+  --light-square: #f1f1f1;
+  --dark-square: #1f1f1f;
+}
+
+.board {
+  background-color: var(--light-square);
+  width: 600px;
+  height: 600px;
+  display: grid;
+  grid-gap: 0;
+  grid-template: auto auto auto auto auto auto auto auto / auto auto auto auto auto auto auto auto;
+}
+
+body {
+  display: flex;
+  height: 100vh;
+  align-items: center;
+  justify-content: center;
+}
+
+.board__square.black-square {
+  background-color: var(--dark-square);
+}
