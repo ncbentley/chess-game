@@ -1,5 +1,4 @@
 # Chess Game
-Simple Local Chess Game in JS
 
 Wireframe
 
