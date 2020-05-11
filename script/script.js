@@ -43,6 +43,10 @@ const board = {
       return moves.length === 0;
     }
     return false;
+  },
+  isDraw(color) {
+    // TODO: Drawing by no moves
+    // TODO: Drawing by repetitiv moves
   }
 }
 
@@ -102,7 +106,12 @@ class Piece {
     board.clicked = null;
     turn = turn === 'white' ? 'black' : 'white';
     if (board.isCheck(turn)) {
-
+      let audio = 'https://media.merriam-webster.com/audio/prons/en/us/mp3/c/check001.mp3';
+      if (board.isCheckmate(turn)) {
+        audio = 'https://media.merriam-webster.com/audio/prons/en/us/mp3/c/checkm01.mp3';
+        // TODO: CHECKMATE
+      }
+      new Audio(audio).play();
     }
     return true;
   }
@@ -185,6 +194,7 @@ class Pawn extends Piece {
 
   availableMoves() {
     this.moves = [];
+    // TODO: En Passant
     // White moves
     if (this.color === 'white') {
       // If square in front of pawn is clear
