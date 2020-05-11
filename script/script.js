@@ -4,6 +4,8 @@ const board = {
   captured: []
 }
 
+const turn = 'white';
+
 class Piece {
   constructor(location, color, $icon) {
     this.color = color;
@@ -29,11 +31,56 @@ class Piece {
     board.squares[target[0]][target[1]].append(this.$icon);
     return true;
   }
+
+  canMove(target=null) {
+    if (this.color !== turn) {
+      return false;
+    }
+  }
 }
 
 class Pawn extends Piece {
   constructor(location, color) {
     const $icon = $(`<i class="fas fa-chess-pawn ${color}">`)[0];
+    super(location, color, $icon);
+  }
+
+  canMove(target=null) {
+    super.canMove(target);
+  }
+}
+
+class Rook extends Piece {
+  constructor(location, color) {
+    const $icon = $(`<i class="fas fa-chess-rook ${color}">`)[0];
+    super(location, color, $icon);
+  }
+}
+
+class Knight extends Piece {
+  constructor(location, color) {
+    const $icon = $(`<i class="fas fa-chess-knight ${color}">`)[0];
+    super(location, color, $icon);
+  }
+}
+
+class Bishop extends Piece {
+  constructor(location, color) {
+    const $icon = $(`<i class="fas fa-chess-bishop ${color}">`)[0];
+    super(location, color, $icon);
+  }
+}
+
+class King extends Piece {
+  constructor(location, color) {
+    const $icon = $(`<i class="fas fa-chess-king ${color}">`)[0];
+    super(location, color, $icon);
+  }
+}
+
+class Queen extends Piece {
+  constructor(location, color) {
+    const $icon = $(`<i class="fas fa-chess-queen ${color}">`)[0];
     super(location, color, $icon);
   }
 }
@@ -59,4 +106,20 @@ $(function() {
       }
     }
   }
+  new Rook([0, 0], 'black');
+  new Knight([0, 1], 'black');
+  new Bishop([0, 2], 'black');
+  new King([0, 3], 'black');
+  new Queen([0, 4], 'black');
+  new Bishop([0, 5], 'black');
+  new Knight([0, 6], 'black');
+  new Rook([0, 7], 'black');
+  new Rook([7, 0], 'white');
+  new Knight([7, 1], 'white');
+  new Bishop([7, 2], 'white');
+  new King([7, 3], 'white');
+  new Queen([7, 4], 'white');
+  new Bishop([7, 5], 'white');
+  new Knight([7, 6], 'white');
+  new Rook([7, 7], 'white');
 });
