@@ -8,7 +8,7 @@ const board = {
   }
 }
 
-const turn = 'black';
+let turn = 'white';
 
 class Piece {
   constructor(location, color, $icon) {
@@ -34,29 +34,55 @@ class Piece {
     this.location = target;
     this.$icon.remove();
     board.squares[target[0]][target[1]].append(this.$icon);
-    return true;
-  }
-
-  canMove(target=null) {
-    return this.color === turn;
-  }
-
-  handleClick() {
+    // Remove any highlighting from all squares
     for (let i = 0; i < board.squares.length; i++) {
       for (let j = 0; j < board.squares[i].length; j++) {
         $(board.squares[i][j]).removeClass("highlighted");
       }
     }
+    // Remove piece elevation
     for (let i = 0; i < board.pieces.length; i++) {
       $(board.pieces[i].$icon).removeClass("elevated");
     }
+    board.clicked = null;
+    turn = turn === 'white' ? 'black' : 'white';
+    return true;
+  }
+
+  canMove(target=null) {
+    console.log(this.color);
+    console.log(turn);
+    console.log(this.color === turn)
+    return this.color === turn;
+  }
+
+  handleClick() {
+    // Remove any highlighting from all squares
+    for (let i = 0; i < board.squares.length; i++) {
+      for (let j = 0; j < board.squares[i].length; j++) {
+        $(board.squares[i][j]).removeClass("highlighted");
+      }
+    }
+    // Remove piece elevation
+    for (let i = 0; i < board.pieces.length; i++) {
+      $(board.pieces[i].$icon).removeClass("elevated");
+    }
+    // Elevate this piece
     $(this.$icon).addClass("elevated");
+    // Tell the board this piece is clicked
     board.clicked = this;
+    // Highlight this square
     $(board.squares[this.location[0]][this.location[1]]).addClass("highlighted");
   }
 
   handleMoveClick(location) {
-
+    this.moves.forEach((spot, i) => {
+      if (location[0] === spot[0] && location[1] === spot[1]) {
+        this.move(location);
+        return true;
+      }
+    });
+    return false;
   }
 }
 
@@ -70,19 +96,24 @@ class Pawn extends Piece {
     if (!super.canMove(target)) {
       return false;
     }
-
-    return true;
+    this.availableMoves();
+    return this.moves.length > 0;
   }
 
   availableMoves() {
     this.moves = [];
+    // White moves
     if (this.color === 'white') {
+      // If square in front of pawn is clear
       if (!board.hasPiece(board.squares[this.location[0] - 1][this.location[1]])) {
+        // Square in front of pawn is eligible
         this.moves.push([this.location[0] - 1, this.location[1]])
+        // If pawn is in starting spot and square 2 in front is clear it's eligible
         if (this.location[0] === 6 && !board.hasPiece(board.squares[this.location[0] - 2][this.location[1]])) {
           this.moves.push([this.location[0] - 2, this.location[1]]);
         }
       }
+      // If squares touching corner of pawn are occupied by enemy, eligible
       if (this.location[1] !== 0 && board.squares[this.location[0] - 1][this.location[1] - 1].children.length == 1) {
         if (!board.squares[this.location[0] - 1][this.location[1] - 1].children[0].classList.contains(this.color)) {
           this.moves.push([this.location[0] - 1, this.location[1] - 1])
@@ -93,13 +124,17 @@ class Pawn extends Piece {
           this.moves.push([this.location[0] - 1, this.location[1] + 1])
         }
       }
-    } else {
+    } else { // Black moves
+      // If square in front of pawn is clear
       if (!board.hasPiece(board.squares[this.location[0] + 1][this.location[1]])) {
+        // Square in front of pawn is eligible
         this.moves.push([this.location[0] + 1, this.location[1]])
+        // If pawn is in starting spot and square 2 in front is clear it's eligible
         if (this.location[0] === 1 && !board.hasPiece(board.squares[this.location[0] + 2][this.location[1]])) {
           this.moves.push([this.location[0] + 2, this.location[1]]);
         }
       }
+      // If squares touching corner of pawn are occupied by enemy, eligible
       if (this.location[1] !== 0 && board.squares[this.location[0] + 1][this.location[1] - 1].children.length == 1) {
         if (!board.squares[this.location[0] + 1][this.location[1] - 1].children[0].classList.contains(this.color)) {
           this.moves.push([this.location[0] + 1, this.location[1] - 1])
@@ -116,11 +151,14 @@ class Pawn extends Piece {
   handleClick() {
     if (this.canMove()) {
       super.handleClick();
+      // Find available moves
       this.availableMoves();
+      // Highlight eligible squares
+      for (let i = 0; i < this.moves.length; i++) {
+        $(board.squares[this.moves[i][0]][this.moves[i][1]]).addClass('highlighted')
+      }
     }
-    for (let i = 0; i < this.moves.length; i++) {
-      $(board.squares[this.moves[i][0]][this.moves[i][1]]).addClass('highlighted')
-    }
+
   }
 }
 
