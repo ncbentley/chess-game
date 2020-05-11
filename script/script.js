@@ -8,6 +8,26 @@ const board = {
   },
   getSquare(location) {
     return this.squares[location[0]][location[1]];
+  },
+  isCheck(color) {
+    let kingSpot = [];
+    this.pieces.forEach((piece, i) => {
+      if (piece.name === 'King' && piece.color === color) {
+        kingSpot = piece.location;
+      }
+    });
+    let check = false;
+    this.pieces.forEach((piece, i) => {
+      if (piece.color !== color) {
+        piece.availableMoves();
+        piece.moves.forEach((move, i) => {
+          if (move[0] === kingSpot[0] && move[1] === kingSpot[1]) {
+            check = true;
+          }
+        });
+      }
+    });
+    return check;
   }
 }
 
@@ -21,6 +41,23 @@ class Piece {
     board.squares[location[0]][location[1]].append($icon);
     board.pieces.push(this);
     this.moves = [];
+  }
+
+  tempMove(target) {
+    for (let i = 0; i < board.pieces.length; i++) {
+      if (board.pieces[i].location[0] === target[0] && board.pieces[i].location[1] === target[1]) {
+        if (board.pieces[i].color === this.color) {
+          return false;
+        } else {
+          board.pieces[i].$icon.remove();
+          board.captured.push(board.pieces.splice(i, 1));
+        }
+      }
+    }
+    this.location = target;
+    this.$icon.remove();
+    board.squares[target[0]][target[1]].append(this.$icon);
+    return true;
   }
 
   move(target) {
@@ -87,12 +124,37 @@ class Piece {
     });
     return false;
   }
+
+  availableMoves() {
+    if (this.color === turn) {
+      const original = this.location;
+      let remove = [];
+      this.moves.forEach((move, i) => {
+        const isCapture = board.hasPiece(board.getSquare(move));
+        this.tempMove(move);
+        if (board.isCheck(turn)) {
+          remove.push(i)
+        }
+        this.tempMove(original);
+        if (isCapture) {
+          const piece = board.captured.pop()[0];
+          $(board.getSquare(move)).append(piece.$icon);
+          board.pieces.push(piece);
+        }
+      });
+      remove.forEach((i, index) => {
+        this.moves.splice(i - index, 1);
+      });
+
+    }
+  }
 }
 
 class Pawn extends Piece {
   constructor(location, color) {
     const $icon = $(`<i class="fas fa-chess-pawn ${color}">`)[0];
     super(location, color, $icon);
+    this.name = 'Pawn';
   }
 
   canMove(target=null) {
@@ -149,6 +211,7 @@ class Pawn extends Piece {
         }
       }
     }
+    super.availableMoves();
   }
 
   handleClick() {
@@ -168,6 +231,7 @@ class Rook extends Piece {
   constructor(location, color) {
     const $icon = $(`<i class="fas fa-chess-rook ${color}">`)[0];
     super(location, color, $icon);
+    this.name = 'Rook';
   }
 
   canMove(target=null) {
@@ -240,6 +304,7 @@ class Rook extends Piece {
         this.moves.push([this.location[0], x]);
       }
     }
+    super.availableMoves();
   }
 
   handleClick() {
@@ -260,6 +325,7 @@ class Knight extends Piece {
   constructor(location, color) {
     const $icon = $(`<i class="fas fa-chess-knight ${color}">`)[0];
     super(location, color, $icon);
+    this.name = 'Knight';
   }
 
   canMove(target=null) {
@@ -311,6 +377,7 @@ class Knight extends Piece {
         }
       });
     });
+    super.availableMoves();
   }
 
   handleClick() {
@@ -328,6 +395,7 @@ class Bishop extends Piece {
   constructor(location, color) {
     const $icon = $(`<i class="fas fa-chess-bishop ${color}">`)[0];
     super(location, color, $icon);
+    this.name = 'Bishop';
   }
 
   canMove(target=null) {
@@ -358,6 +426,7 @@ class Bishop extends Piece {
         current[1] += angle[1];
       }
     });
+    super.availableMoves();
   }
 
   handleClick() {
@@ -375,6 +444,7 @@ class King extends Piece {
   constructor(location, color) {
     const $icon = $(`<i class="fas fa-chess-king ${color}">`)[0];
     super(location, color, $icon);
+    this.name = 'King';
   }
 
   canMove(target=null) {
@@ -397,6 +467,7 @@ class King extends Piece {
         }
       }
     }
+    super.availableMoves();
   }
 
   handleClick() {
@@ -416,6 +487,7 @@ class Queen extends Piece {
   constructor(location, color) {
     const $icon = $(`<i class="fas fa-chess-queen ${color}">`)[0];
     super(location, color, $icon);
+    this.name = 'Queen';
   }
 
   canMove(target=null) {
@@ -506,6 +578,7 @@ class Queen extends Piece {
         this.moves.push([this.location[0], x]);
       }
     }
+    super.availableMoves();
   }
 
   handleClick() {
