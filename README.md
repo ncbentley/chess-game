@@ -20,3 +20,10 @@ User Story
   - The piece *moves* and doesn't go to the same square on which it started.
 - If user is presently in check, the user will be notified upon turn start and invalid moves through a popup or sound.
 - Every time a player moves the game will check itself for draw status (Repetitive moves or no valid moves for the current player without being in check) or checkmate (no valid moves for the current player while in check)
+- End of game results in modal explaining the endstate and an option to restart which will reset everything and start the game over.
+
+MVP: Working chess Game
+
+Stretch Goals:
+- Customizable Timer (i.e 10 minutes per player per game or 2 minutes per player + 3 seconds every move...)
+- Online functionality ??? (I have a cheap laptop running ubuntu I can make public facing on an isolated part of my network)
