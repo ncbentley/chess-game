@@ -376,6 +376,40 @@ class King extends Piece {
     const $icon = $(`<i class="fas fa-chess-king ${color}">`)[0];
     super(location, color, $icon);
   }
+
+  canMove(target=null) {
+    if (!super.canMove(target)) {
+      return false;
+    }
+    this.availableMoves();
+    return this.moves.length > 0;
+  }
+
+  availableMoves() {
+    this.moves = [];
+    for (let i = -1; i <= 1; i++) {
+      for (let j = -1; j <= 1; j++) {
+        if (!(this.location[0] + i < 0 || this.location[0] + i > 7 || this.location[1] + j < 0 || this.location[1] + j > 7)) {
+          const square = board.getSquare([this.location[0] + i, this.location[1] + j]);
+          if (!board.hasPiece(square) || !square.children[0].classList.contains(this.color)) {
+            this.moves.push([this.location[0] + i, this.location[1] + j]);
+          }
+        }
+      }
+    }
+  }
+
+  handleClick() {
+    if (this.canMove()) {
+      super.handleClick();
+      // Find available moves
+      this.availableMoves();
+      // Highlight eligible squares
+      for (let i = 0; i < this.moves.length; i++) {
+        $(board.squares[this.moves[i][0]][this.moves[i][1]]).addClass('highlighted')
+      }
+    }
+  }
 }
 
 class Queen extends Piece {
