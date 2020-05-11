@@ -1,7 +1,12 @@
 :root {
+
+}
+
+body.greyscale {
   /* Board Colors */
-  --light-square: #f1f1f1;
-  --dark-square: #1f1f1f;
+  --background: #999999;
+  --light-square: #cccccc;
+  --dark-square: #333333c0;
 }
 
 .board {
@@ -14,6 +19,7 @@
 }
 
 body {
+  background-color: var(--background);
   display: flex;
   height: 100vh;
   align-items: center;
