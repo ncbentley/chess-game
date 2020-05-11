@@ -50,6 +50,9 @@ const board = {
   }
 }
 
+// Castling functionality
+// Make sound when selecting invalid movement spot or invalid piece
+
 let turn = 'white';
 
 class Piece {
@@ -105,6 +108,7 @@ class Piece {
     }
     board.clicked = null;
     turn = turn === 'white' ? 'black' : 'white';
+    $('h1').text(`${turn.replace(turn.charAt(0), turn.charAt(0).toUpperCase())}'s Turn`)
     if (board.isCheck(turn)) {
       let audio = 'https://media.merriam-webster.com/audio/prons/en/us/mp3/c/check001.mp3';
       if (board.isCheckmate(turn)) {
@@ -114,6 +118,7 @@ class Piece {
       new Audio(audio).play();
     }
     return true;
+    // TODO: Make sound when moving piece
   }
 
   canMove(target=null) {
@@ -140,6 +145,7 @@ class Piece {
     board.clicked = this;
     // Highlight this square
     $(board.squares[this.location[0]][this.location[1]]).addClass("highlighted");
+    // TODO: Make sound when selecting piece
   }
 
   handleMoveClick(location) {
