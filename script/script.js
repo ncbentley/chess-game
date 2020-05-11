@@ -5,6 +5,9 @@ const board = {
   clicked: null,
   hasPiece(square) {
     return square.children.length > 0;
+  },
+  getSquare(location) {
+    return this.squares[location[0]][location[1]];
   }
 }
 
@@ -325,6 +328,46 @@ class Bishop extends Piece {
   constructor(location, color) {
     const $icon = $(`<i class="fas fa-chess-bishop ${color}">`)[0];
     super(location, color, $icon);
+  }
+
+  canMove(target=null) {
+    if (!super.canMove(target)) {
+      return false;
+    }
+    this.availableMoves();
+    return this.moves.length > 0;
+  }
+
+  availableMoves() {
+    this.moves = [];
+    const angles = [[1, 1], [1, -1], [-1, 1], [-1, -1]];
+    angles.forEach((angle, i) => {
+      const current = [this.location[0] + angle[0], this.location[1] + angle[1]];
+      while (current[0] <= 7 && current[0] >= 0 && current[1] <= 7 && current[1] >= 0) {
+        const square = board.getSquare(current);
+        if (board.hasPiece(square)) {
+          if (!square.children[0].classList.contains(this.color)) {
+            this.moves.push(current);
+            break;
+          } else {
+            break;
+          }
+        }
+        this.moves.push([current[0], current[1]]);
+        current[0] += angle[0];
+        current[1] += angle[1];
+      }
+    });
+  }
+
+  handleClick() {
+    if (this.canMove()) {
+      super.handleClick();
+      // Highlight eligible squares
+      for (let i = 0; i < this.moves.length; i++) {
+        $(board.squares[this.moves[i][0]][this.moves[i][1]]).addClass('highlighted')
+      }
+    }
   }
 }
 
