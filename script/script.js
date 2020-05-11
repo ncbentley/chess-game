@@ -28,6 +28,21 @@ const board = {
       }
     });
     return check;
+  },
+  isCheckmate(color) {
+    let moves = [];
+    if (this.isCheck(color)) {
+      this.pieces.forEach((piece, i) => {
+        if (piece.color === turn) {
+          piece.availableMoves();
+          piece.moves.forEach((move, i) => {
+            moves.push(move);
+          });
+        }
+      });
+      return moves.length === 0;
+    }
+    return false;
   }
 }
 
@@ -86,6 +101,9 @@ class Piece {
     }
     board.clicked = null;
     turn = turn === 'white' ? 'black' : 'white';
+    if (board.isCheck(turn)) {
+
+    }
     return true;
   }
 
@@ -616,16 +634,16 @@ $(function() {
   new Rook([0, 0], 'black');
   new Knight([0, 1], 'black');
   new Bishop([0, 2], 'black');
-  new King([0, 3], 'black');
-  new Queen([0, 4], 'black');
+  new King([0, 4], 'black');
+  new Queen([0, 3], 'black');
   new Bishop([0, 5], 'black');
   new Knight([0, 6], 'black');
   new Rook([0, 7], 'black');
   new Rook([7, 0], 'white');
   new Knight([7, 1], 'white');
   new Bishop([7, 2], 'white');
-  new King([7, 3], 'white');
-  new Queen([7, 4], 'white');
+  new King([7, 4], 'white');
+  new Queen([7, 3], 'white');
   new Bishop([7, 5], 'white');
   new Knight([7, 6], 'white');
   new Rook([7, 7], 'white');
