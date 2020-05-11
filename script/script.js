@@ -383,6 +383,106 @@ class Queen extends Piece {
     const $icon = $(`<i class="fas fa-chess-queen ${color}">`)[0];
     super(location, color, $icon);
   }
+
+  canMove(target=null) {
+    if (!super.canMove(target)) {
+      return false;
+    }
+    this.availableMoves();
+    return this.moves.length > 0;
+  }
+
+  availableMoves() {
+    this.moves = [];
+    const angles = [[1, 1], [1, -1], [-1, 1], [-1, -1]];
+    angles.forEach((angle, i) => {
+      const current = [this.location[0] + angle[0], this.location[1] + angle[1]];
+      while (current[0] <= 7 && current[0] >= 0 && current[1] <= 7 && current[1] >= 0) {
+        const square = board.getSquare(current);
+        if (board.hasPiece(square)) {
+          if (!square.children[0].classList.contains(this.color)) {
+            this.moves.push(current);
+            break;
+          } else {
+            break;
+          }
+        }
+        this.moves.push([current[0], current[1]]);
+        current[0] += angle[0];
+        current[1] += angle[1];
+      }
+    });
+    for (let y = this.location[0] + 1; y < 8; y++) {
+      // If there's a piece here check if enemy or friendly
+      if (board.hasPiece(board.squares[y][this.location[1]])) {
+        const square = board.squares[y][this.location[1]];
+        // friendly - stop
+        if (square.children[0].classList.contains(this.color)) {
+          break;
+        } else { // enemy - add the square, then stop
+          this.moves.push([y, this.location[1]]);
+          break;
+        }
+      } else {
+        this.moves.push([y, this.location[1]]);
+      }
+    }
+    for (let y = this.location[0] - 1; y >= 0; y--) {
+      // If there's a piece here check if enemy or friendly
+      if (board.hasPiece(board.squares[y][this.location[1]])) {
+        const square = board.squares[y][this.location[1]];
+        // friendly - stop
+        if (square.children[0].classList.contains(this.color)) {
+          break;
+        } else { // enemy - add the square, then stop
+          this.moves.push([y, this.location[1]]);
+          break;
+        }
+      } else {
+        this.moves.push([y, this.location[1]]);
+      }
+    }
+    for (let x = this.location[1] + 1; x < 8; x++) {
+      // If there's a piece here check if enemy or friendly
+      if (board.hasPiece(board.squares[this.location[0]][x])) {
+        const square = board.squares[this.location[0]][x];
+        // friendly - stop
+        if (square.children[0].classList.contains(this.color)) {
+          break;
+        } else { // enemy - add the square, then stop
+          this.moves.push([this.location[0], x]);
+          break;
+        }
+      } else {
+        this.moves.push([this.location[0], x]);
+      }
+    }
+    for (let x = this.location[1] - 1; x >= 0; x--) {
+      // If there's a piece here check if enemy or friendly
+      if (board.hasPiece(board.squares[this.location[0]][x])) {
+        const square = board.squares[this.location[0]][x];
+        // friendly - stop
+        if (square.children[0].classList.contains(this.color)) {
+          break;
+        } else { // enemy - add the square, then stop
+          this.moves.push([this.location[0], x]);
+          break;
+        }
+      } else {
+        this.moves.push([this.location[0], x]);
+      }
+    }
+  }
+
+  handleClick() {
+    if (this.canMove()) {
+      super.handleClick();
+      // Highlight eligible squares
+      for (let i = 0; i < this.moves.length; i++) {
+        $(board.squares[this.moves[i][0]][this.moves[i][1]]).addClass('highlighted')
+      }
+    }
+  }
 }
 
 
