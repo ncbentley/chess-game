@@ -258,6 +258,67 @@ class Knight extends Piece {
     const $icon = $(`<i class="fas fa-chess-knight ${color}">`)[0];
     super(location, color, $icon);
   }
+
+  canMove(target=null) {
+    if (!super.canMove(target)) {
+      return false;
+    }
+    this.availableMoves();
+    return this.moves.length > 0;
+  }
+
+  availableMoves() {
+    this.moves = [];
+    let vertical = [];
+    let horizontal = [];
+    // Determine how far in each direction the piece can move based on where it is on the board.
+    if (this.location[0] > 0) {
+      vertical.push(-1);
+      if (this.location[0] > 1) {
+        vertical.push(-2);
+      }
+    }
+    if (this.location[0] < 7) {
+      vertical.push(1);
+      if (this.location[0] < 6) {
+        vertical.push(2);
+      }
+    }
+    if (this.location[1] > 0) {
+      horizontal.push(-1);
+      if (this.location[1] > 1) {
+        horizontal.push(-2);
+      }
+    }
+    if (this.location[1] < 7) {
+      horizontal.push(1);
+      if (this.location[1] < 6) {
+        horizontal.push(2);
+      }
+    }
+    // Push in applicable moves
+    vertical.forEach((v, i) => {
+      horizontal.forEach((h, i) => {
+        // Can only move 1 square in one direction and 2 in the other.
+        if (Math.abs(h) !== Math.abs(v)) {
+          const square = board.squares[this.location[0] + v][this.location[1] + h]
+          if (!board.hasPiece(square) || !square.children[0].classList.contains(this.color)) {
+            this.moves.push([this.location[0] + v, this.location[1] + h])
+          }
+        }
+      });
+    });
+  }
+
+  handleClick() {
+    if (this.canMove()) {
+      super.handleClick();
+      // Highlight eligible squares
+      for (let i = 0; i < this.moves.length; i++) {
+        $(board.squares[this.moves[i][0]][this.moves[i][1]]).addClass('highlighted')
+      }
+    }
+  }
 }
 
 class Bishop extends Piece {
