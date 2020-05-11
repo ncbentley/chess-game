@@ -1,10 +1,14 @@
 const board = {
   squares: [],
   pieces: [],
-  captured: []
+  captured: [],
+  clicked: null,
+  hasPiece(square) {
+    return square.children.length > 0;
+  }
 }
 
-const turn = 'white';
+const turn = 'black';
 
 class Piece {
   constructor(location, color, $icon) {
@@ -13,6 +17,7 @@ class Piece {
     this.$icon = $icon;
     board.squares[location[0]][location[1]].append($icon);
     board.pieces.push(this);
+    this.moves = [];
   }
 
   move(target) {
@@ -33,9 +38,25 @@ class Piece {
   }
 
   canMove(target=null) {
-    if (this.color !== turn) {
-      return false;
+    return this.color === turn;
+  }
+
+  handleClick() {
+    for (let i = 0; i < board.squares.length; i++) {
+      for (let j = 0; j < board.squares[i].length; j++) {
+        $(board.squares[i][j]).removeClass("highlighted");
+      }
     }
+    for (let i = 0; i < board.pieces.length; i++) {
+      $(board.pieces[i].$icon).removeClass("elevated");
+    }
+    $(this.$icon).addClass("elevated");
+    board.clicked = this;
+    $(board.squares[this.location[0]][this.location[1]]).addClass("highlighted");
+  }
+
+  handleMoveClick(location) {
+
   }
 }
 
@@ -46,7 +67,60 @@ class Pawn extends Piece {
   }
 
   canMove(target=null) {
-    super.canMove(target);
+    if (!super.canMove(target)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  availableMoves() {
+    this.moves = [];
+    if (this.color === 'white') {
+      if (!board.hasPiece(board.squares[this.location[0] - 1][this.location[1]])) {
+        this.moves.push([this.location[0] - 1, this.location[1]])
+        if (this.location[0] === 6 && !board.hasPiece(board.squares[this.location[0] - 2][this.location[1]])) {
+          this.moves.push([this.location[0] - 2, this.location[1]]);
+        }
+      }
+      if (this.location[1] !== 0 && board.squares[this.location[0] - 1][this.location[1] - 1].children.length == 1) {
+        if (!board.squares[this.location[0] - 1][this.location[1] - 1].children[0].classList.contains(this.color)) {
+          this.moves.push([this.location[0] - 1, this.location[1] - 1])
+        }
+      }
+      if (this.location[1] !== 7 && board.squares[this.location[0] - 1][this.location[1] + 1].children.length == 1) {
+        if (!board.squares[this.location[0] - 1][this.location[1] + 1].children[0].classList.contains(this.color)) {
+          this.moves.push([this.location[0] - 1, this.location[1] + 1])
+        }
+      }
+    } else {
+      if (!board.hasPiece(board.squares[this.location[0] + 1][this.location[1]])) {
+        this.moves.push([this.location[0] + 1, this.location[1]])
+        if (this.location[0] === 1 && !board.hasPiece(board.squares[this.location[0] + 2][this.location[1]])) {
+          this.moves.push([this.location[0] + 2, this.location[1]]);
+        }
+      }
+      if (this.location[1] !== 0 && board.squares[this.location[0] + 1][this.location[1] - 1].children.length == 1) {
+        if (!board.squares[this.location[0] + 1][this.location[1] - 1].children[0].classList.contains(this.color)) {
+          this.moves.push([this.location[0] + 1, this.location[1] - 1])
+        }
+      }
+      if (this.location[1] !== 7 && board.squares[this.location[0] + 1][this.location[1] + 1].children.length == 1) {
+        if (!board.squares[this.location[0] + 1][this.location[1] + 1].children[0].classList.contains(this.color)) {
+          this.moves.push([this.location[0] + 1, this.location[1] + 1])
+        }
+      }
+    }
+  }
+
+  handleClick() {
+    if (this.canMove()) {
+      super.handleClick();
+      this.availableMoves();
+    }
+    for (let i = 0; i < this.moves.length; i++) {
+      $(board.squares[this.moves[i][0]][this.moves[i][1]]).addClass('highlighted')
+    }
   }
 }
 
@@ -122,4 +196,22 @@ $(function() {
   new Bishop([7, 5], 'white');
   new Knight([7, 6], 'white');
   new Rook([7, 7], 'white');
+  $(".board__square").on('click', function(event) {
+    if (board.clicked) {
+      if (this.children.length == 0) {
+        board.clicked.handleMoveClick([Math.floor($(this).index() / 8), $(this).index() % 8]);
+      } else {
+        if (!this.children[0].classList.contains(board.clicked.color)) {
+          board.clicked.handleMoveClick([Math.floor($(this).index() / 8), $(this).index() % 8]);
+        }
+      }
+    }
+  });
+  $(".board__square").on('click', 'i', function(event) {
+    for (let i = 0; i < board.pieces.length; i++) {
+      if (board.pieces[i].$icon === this) {
+        board.pieces[i].handleClick();
+      }
+    }
+  });
 });

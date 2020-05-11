@@ -7,6 +7,8 @@ body.greyscale {
   --background: #999999;
   --light-square: #cccccc;
   --dark-square: #333333c0;
+  --light-square-highlight: #E6E697;
+  --dark-square-highlight: #99994Ad0;
 }
 
 .board {
@@ -32,6 +34,14 @@ body {
   background-color: var(--dark-square);
 }
 
+.board__square.black-square.highlighted {
+  background-color: var(--dark-square-highlight);
+}
+
+.board__square.white-square.highlighted {
+  background-color: var(--light-square-highlight);
+}
+
 .board__square {
   display: flex;
   align-items: center;
@@ -40,6 +50,10 @@ body {
 
 i {
   font-size: 2.6em;
+}
+
+i.elevated {
+  font-size: 3.2em;
 }
 
 i.black {
