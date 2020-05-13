@@ -266,6 +266,12 @@ class Rook extends Piece {
     const $icon = $(`<i class="fas fa-chess-rook ${color}">`)[0];
     super(location, color, $icon);
     this.name = 'Rook';
+    this.moved = false;
+  }
+
+  move(target) {
+    this.moved = true;
+    super.move(target);
   }
 
   canMove(target=null) {
@@ -479,6 +485,38 @@ class King extends Piece {
     const $icon = $(`<i class="fas fa-chess-king ${color}">`)[0];
     super(location, color, $icon);
     this.name = 'King';
+    this.moved = false;
+  }
+
+  move(target) {
+    this.moved = true;
+    // If we're moving as a castle, then move the rook too
+    if (Math.abs(target[1] - this.location[1]) === 2) {
+      if (target[1] - this.location[1] > 0) { // King Side
+        board.pieces.forEach((piece, i) => {
+          if (piece.name === 'Rook' && piece.color === this.color && !piece.moved) {
+            // Make sure we have the right rook
+            if (Math.abs(this.location[1] - piece.location[1]) === 3) {
+              // Move it to other side of King's new home
+              piece.move([target[0], target[1] - 1]);
+            }
+          }
+        });
+      } else { // Queen side
+        board.pieces.forEach((piece, i) => {
+          if (piece.name === 'Rook' && piece.color === this.color && !piece.moved) {
+            // Make sure we have the right rook
+            if (Math.abs(this.location[1] - piece.location[1]) === 4) {
+              // Move it to other side of King's new home
+              piece.move([target[0], target[1] + 1]);
+            }
+          }
+        });
+      }
+      // Moving both flips the turn twice, let's flip it a third so it's correct
+      turn = turn === 'white' ? 'black' : 'white';
+    }
+    super.move(target);
   }
 
   canMove(target=null) {
@@ -500,6 +538,49 @@ class King extends Piece {
           }
         }
       }
+    }
+    // When the game looks for check one team's turn, this runs for the other team, and then does the check look again, which causes problems. Only run this when it's this pieces turn
+    if (!this.moved && turn === this.color) {
+      board.pieces.forEach((piece, i) => {
+        if (piece.name === 'Rook' && piece.color === this.color && !piece.moved) {
+          // King Side Castle
+          if (Math.abs(this.location[1] - piece.location[1]) === 3) {
+            // If there's nothing between the King and Rook
+            if (!(board.hasPiece(board.getSquare([this.location[0], this.location[1] + 1])) || board.hasPiece(board.getSquare([this.location[0], this.location[1] + 2])))) {
+              // If the king will not move through check...
+              let valid = true;
+              for (let x = 0; x < 2; x++) {
+                this.tempMove([this.location[0], this.location[1] + 1]);
+                if (board.isCheck(this.color)) {
+                  valid = false;
+                }
+              }
+              if (valid) {
+                this.moves.push(this.location);
+              }
+              // Move it back
+              this.tempMove([this.location[0], this.location[1] - 2])
+            }
+          } else { // Queen Side Castle
+            // If there's nothing between the King and Rook
+            if (!(board.hasPiece(board.getSquare([this.location[0], this.location[1] - 1])) || board.hasPiece(board.getSquare([this.location[0], this.location[1] - 2])))) {
+              // If the king will not move through check...
+              let valid = true;
+              for (let x = 0; x < 2; x++) {
+                this.tempMove([this.location[0], this.location[1] - 1]);
+                if (board.isCheck(this.color)) {
+                  valid = false;
+                }
+              }
+              if (valid) {
+                this.moves.push(this.location);
+              }
+              // Move it back
+              this.tempMove([this.location[0], this.location[1] + 2])
+            }
+          }
+        }
+      });
     }
     super.availableMoves();
   }
