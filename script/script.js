@@ -46,7 +46,7 @@ const board = {
   },
   isDraw(color) {
     // TODO: Drawing by no moves
-    // TODO: Drawing by repetitiv moves
+    // TODO: Drawing by repetitive moves
   }
 }
 
@@ -109,22 +109,19 @@ class Piece {
     board.clicked = null;
     turn = turn === 'white' ? 'black' : 'white';
     $('h1').text(`${turn.replace(turn.charAt(0), turn.charAt(0).toUpperCase())}'s Turn`)
+    let audio = 'assets/move_piece.wav';
+    new Audio(audio).play();
     if (board.isCheck(turn)) {
-      let audio = 'https://media.merriam-webster.com/audio/prons/en/us/mp3/c/check001.mp3';
+      audio = 'https://media.merriam-webster.com/audio/prons/en/us/mp3/c/check001.mp3';
       if (board.isCheckmate(turn)) {
         audio = 'https://media.merriam-webster.com/audio/prons/en/us/mp3/c/checkm01.mp3';
-        // TODO: CHECKMATE
       }
       new Audio(audio).play();
     }
     return true;
-    // TODO: Make sound when moving piece
   }
 
   canMove(target=null) {
-    console.log(this.color);
-    console.log(turn);
-    console.log(this.color === turn)
     return this.color === turn;
   }
 
@@ -142,23 +139,38 @@ class Piece {
     // Elevate this piece
     $(this.$icon).addClass("elevated");
     // Tell the board this piece is clicked
-    board.clicked = this;
+    // Delay it to prevent handleMoveClick() from running on first click
+    setTimeout(() => {
+      board.clicked = this;
+    },.1);
     // Highlight this square
     $(board.squares[this.location[0]][this.location[1]]).addClass("highlighted");
-    // TODO: Make sound when selecting piece
+    let audio = 'assets/select_piece.wav';
+    new Audio(audio).play();
   }
 
+  // As long as they clicked on a valid spot, move them.
   handleMoveClick(location) {
+    let valid = false;
     this.moves.forEach((spot, i) => {
       if (location[0] === spot[0] && location[1] === spot[1]) {
         this.move(location);
-        return true;
+        valid = true;
       }
     });
-    return false;
+    if (!valid) {
+      new Audio('assets/error.wav').play();
+      $(board.clicked.$icon).addClass('shaker');
+      setTimeout(() => {
+        $(board.clicked.$icon).removeClass('shaker');
+      }, .3);
+    }
+
+    return valid;
   }
 
   availableMoves() {
+    // Make sure all available moves do not put the player in chase - but only for the current team, otherwise we recurse infinitely.
     if (this.color === turn) {
       const original = this.location;
       let remove = [];
@@ -200,7 +212,6 @@ class Pawn extends Piece {
 
   availableMoves() {
     this.moves = [];
-    // TODO: En Passant
     // White moves
     if (this.color === 'white') {
       // If square in front of pawn is clear
@@ -257,6 +268,12 @@ class Pawn extends Piece {
       for (let i = 0; i < this.moves.length; i++) {
         $(board.squares[this.moves[i][0]][this.moves[i][1]]).addClass('highlighted')
       }
+    } else {
+      new Audio('assets/error.wav').play();
+      $(board.clicked.$icon).addClass('shaker');
+      setTimeout(() => {
+        $(board.clicked.$icon).removeClass('shaker');
+      }, .3);
     }
   }
 }
@@ -356,6 +373,12 @@ class Rook extends Piece {
       for (let i = 0; i < this.moves.length; i++) {
         $(board.squares[this.moves[i][0]][this.moves[i][1]]).addClass('highlighted')
       }
+    } else {
+      new Audio('assets/error.wav').play();
+      $(board.clicked.$icon).addClass('shaker');
+      setTimeout(() => {
+        $(board.clicked.$icon).removeClass('shaker');
+      }, .3);
     }
   }
 
@@ -427,6 +450,12 @@ class Knight extends Piece {
       for (let i = 0; i < this.moves.length; i++) {
         $(board.squares[this.moves[i][0]][this.moves[i][1]]).addClass('highlighted')
       }
+    } else {
+      new Audio('assets/error.wav').play();
+      $(board.clicked.$icon).addClass('shaker');
+      setTimeout(() => {
+        $(board.clicked.$icon).removeClass('shaker');
+      }, .3);
     }
   }
 }
@@ -436,7 +465,7 @@ class Bishop extends Piece {
     const $icon = $(`<i class="fas fa-chess-bishop ${color}">`)[0];
     super(location, color, $icon);
     this.name = 'Bishop';
-  }
+  }// TODO: Make sound when selecting piece
 
   canMove(target=null) {
     if (!super.canMove(target)) {
@@ -476,6 +505,12 @@ class Bishop extends Piece {
       for (let i = 0; i < this.moves.length; i++) {
         $(board.squares[this.moves[i][0]][this.moves[i][1]]).addClass('highlighted')
       }
+    } else {
+      new Audio('assets/error.wav').play();
+      $(board.clicked.$icon).addClass('shaker');
+      setTimeout(() => {
+        $(board.clicked.$icon).removeClass('shaker');
+      }, .3);
     }
   }
 }
@@ -594,6 +629,12 @@ class King extends Piece {
       for (let i = 0; i < this.moves.length; i++) {
         $(board.squares[this.moves[i][0]][this.moves[i][1]]).addClass('highlighted')
       }
+    } else {
+      new Audio('assets/error.wav').play();
+      $(board.clicked.$icon).addClass('shaker');
+      setTimeout(() => {
+        $(board.clicked.$icon).removeClass('shaker');
+      }, .3);
     }
   }
 }
@@ -703,6 +744,12 @@ class Queen extends Piece {
       for (let i = 0; i < this.moves.length; i++) {
         $(board.squares[this.moves[i][0]][this.moves[i][1]]).addClass('highlighted')
       }
+    } else {
+      new Audio('assets/error.wav').play();
+      $(board.clicked.$icon).addClass('shaker');
+      setTimeout(() => {
+        $(board.clicked.$icon).removeClass('shaker');
+      }, .3);
     }
   }
 }
@@ -748,14 +795,20 @@ $(function() {
     if (board.clicked) {
       if (this.children.length == 0) {
         board.clicked.handleMoveClick([Math.floor($(this).index() / 8), $(this).index() % 8]);
+      } else if (!this.children[0].classList.contains(board.clicked.color)) {
+        board.clicked.handleMoveClick([Math.floor($(this).index() / 8), $(this).index() % 8]);
       } else {
-        if (!this.children[0].classList.contains(board.clicked.color)) {
-          board.clicked.handleMoveClick([Math.floor($(this).index() / 8), $(this).index() % 8]);
-        }
+        new Audio('assets/error.wav').play();
+        $(board.clicked.$icon).addClass('shaker');
+        setTimeout(() => {
+          $(board.clicked.$icon).removeClass('shaker');
+        }, .3);
       }
+
     }
   });
   $(".board__square").on('click', 'i', function(event) {
+    event.stopPropagation();
     for (let i = 0; i < board.pieces.length; i++) {
       if (board.pieces[i].$icon === this) {
         board.pieces[i].handleClick();
