@@ -43,15 +43,8 @@ const board = {
       return moves.length === 0;
     }
     return false;
-  },
-  isDraw(color) {
-    // TODO: Drawing by no moves
-    // TODO: Drawing by repetitive moves
   }
 }
-
-// Castling functionality
-// Make sound when selecting invalid movement spot or invalid piece
 
 let turn = 'white';
 
@@ -465,7 +458,7 @@ class Bishop extends Piece {
     const $icon = $(`<i class="fas fa-chess-bishop ${color}">`)[0];
     super(location, color, $icon);
     this.name = 'Bishop';
-  }// TODO: Make sound when selecting piece
+  }
 
   canMove(target=null) {
     if (!super.canMove(target)) {
