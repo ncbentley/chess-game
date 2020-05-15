@@ -40,9 +40,16 @@ const board = {
           });
         }
       });
+      if (moves.length === 0) {
+        this.displayWin(color === 'white' ? 'white' : 'black');
+      }
       return moves.length === 0;
     }
     return false;
+  },
+  displayWin(color) {
+    $('#winner').text(color.charAt(0).toUpperCase() + color.slice(1));
+    $(".winner").removeClass('hidden');
   }
 }
 
@@ -81,8 +88,14 @@ class Piece {
         if (board.pieces[i].color === this.color) {
           return false;
         } else {
-          board.pieces[i].$icon.remove();
+          const $icon = board.pieces[i].$icon
+          $icon.remove();
           board.captured.push(board.pieces.splice(i, 1));
+          if ($icon.classList.contains('white')) {
+            $('.white-pieces').append($icon);
+          } else {
+            $('.black-pieces').append($icon);
+          }
         }
       }
     }
@@ -101,9 +114,30 @@ class Piece {
     }
     board.clicked = null;
     turn = turn === 'white' ? 'black' : 'white';
-    $('h1').text(`${turn.replace(turn.charAt(0), turn.charAt(0).toUpperCase())}'s Turn`)
+    $('#turn-display').text(`${turn.replace(turn.charAt(0), turn.charAt(0).toUpperCase())}'s Turn`)
     let audio = 'assets/move_piece.wav';
     new Audio(audio).play();
+    // If pawn reaches end make it a queen
+    if (target[0] === 7 && this.color === 'black' && this.name === 'Pawn') {
+      this.$icon.remove();
+      $('.black-pieces').append(this.$icon);
+      board.pieces.forEach((piece, i) => {
+        if (piece.$icon === this.$icon) {
+          board.captured.push(board.pieces.splice(i, 1))
+        }
+      });
+      new Queen(target, this.color);
+    }
+    if (target[0] === 0 && this.color === 'white' && this.name === 'Pawn') {
+      this.$icon.remove();
+      $('.white-pieces').append(this.$icon);
+      board.pieces.forEach((piece, i) => {
+        if (piece.$icon === this.$icon) {
+          board.captured.push(board.pieces.splice(i, 1))
+        }
+      });
+      new Queen(target, this.color);
+    }
     if (board.isCheck(turn)) {
       audio = 'https://media.merriam-webster.com/audio/prons/en/us/mp3/c/check001.mp3';
       if (board.isCheckmate(turn)) {
@@ -748,10 +782,16 @@ class Queen extends Piece {
 }
 
 
-$(function() {
-  console.log('Jquery is running!');
-  // Fill my board with an array of arrays
+
+const start = () => {
   const squares = $('.board__square');
+  // Clear the DOM and the board object
+  squares.empty();
+  board.squares = [];
+  board.pieces = [];
+  board.captured = [];
+  board.clicked = null;
+  // Fill my board with an array of arrays
   for (let i = 0; i < 8; i++) {
     let row = [];
     for (let j = 0; j < 8; j++) {
@@ -784,6 +824,11 @@ $(function() {
   new Bishop([7, 5], 'white');
   new Knight([7, 6], 'white');
   new Rook([7, 7], 'white');
+}
+
+
+$(function() {
+  start();
   $(".board__square").on('click', function(event) {
     if (board.clicked) {
       if (this.children.length == 0) {
@@ -801,11 +846,16 @@ $(function() {
     }
   });
   $(".board__square").on('click', 'i', function(event) {
-    event.stopPropagation();
-    for (let i = 0; i < board.pieces.length; i++) {
-      if (board.pieces[i].$icon === this) {
-        board.pieces[i].handleClick();
+    if (this.classList.contains(turn)) {
+      event.stopPropagation();
+      for (let i = 0; i < board.pieces.length; i++) {
+        if (board.pieces[i].$icon === this) {
+          board.pieces[i].handleClick();
+        }
       }
     }
+  });
+  $('button').on('click', function(event) {
+    location.reload();
   });
 });

@@ -11,82 +11,92 @@
   <title>Document</title>
 </head>
 <body class="greyscale">
-  <div class="container">
-    <h1>White's Turn</h1>
+  <div class="winner hidden">
+    <section class="winner__display">
+      <h1><span id="winner"></span> has won by checkmate!</h1>
+      <button>Restart</button>
+    </section>
   </div>
-  <div class="board">
-    <!-- Row 1 -->
-    <div class="board__square white-square"></div>
-    <div class="board__square black-square"></div>
-    <div class="board__square white-square"></div>
-    <div class="board__square black-square"></div>
-    <div class="board__square white-square"></div>
-    <div class="board__square black-square"></div>
-    <div class="board__square white-square"></div>
-    <div class="board__square black-square"></div>
-    <!-- Row 2 -->
-    <div class="board__square black-square"></div>
-    <div class="board__square white-square"></div>
-    <div class="board__square black-square"></div>
-    <div class="board__square white-square"></div>
-    <div class="board__square black-square"></div>
-    <div class="board__square white-square"></div>
-    <div class="board__square black-square"></div>
-    <div class="board__square white-square"></div>
-    <!-- Row 3 -->
-    <div class="board__square white-square"></div>
-    <div class="board__square black-square"></div>
-    <div class="board__square white-square"></div>
-    <div class="board__square black-square"></div>
-    <div class="board__square white-square"></div>
-    <div class="board__square black-square"></div>
-    <div class="board__square white-square"></div>
-    <div class="board__square black-square"></div>
-    <!-- Row 4 -->
-    <div class="board__square black-square"></div>
-    <div class="board__square white-square"></div>
-    <div class="board__square black-square"></div>
-    <div class="board__square white-square"></div>
-    <div class="board__square black-square"></div>
-    <div class="board__square white-square"></div>
-    <div class="board__square black-square"></div>
-    <div class="board__square white-square"></div>
-    <!-- Row 5 -->
-    <div class="board__square white-square"></div>
-    <div class="board__square black-square"></div>
-    <div class="board__square white-square"></div>
-    <div class="board__square black-square"></div>
-    <div class="board__square white-square"></div>
-    <div class="board__square black-square"></div>
-    <div class="board__square white-square"></div>
-    <div class="board__square black-square"></div>
-    <!-- Row 6 -->
-    <div class="board__square black-square"></div>
-    <div class="board__square white-square"></div>
-    <div class="board__square black-square"></div>
-    <div class="board__square white-square"></div>
-    <div class="board__square black-square"></div>
-    <div class="board__square white-square"></div>
-    <div class="board__square black-square"></div>
-    <div class="board__square white-square"></div>
-    <!-- Row 7 -->
-    <div class="board__square white-square"></div>
-    <div class="board__square black-square"></div>
-    <div class="board__square white-square"></div>
-    <div class="board__square black-square"></div>
-    <div class="board__square white-square"></div>
-    <div class="board__square black-square"></div>
-    <div class="board__square white-square"></div>
-    <div class="board__square black-square"></div>
-    <!-- Row 8 -->
-    <div class="board__square black-square"></div>
-    <div class="board__square white-square"></div>
-    <div class="board__square black-square"></div>
-    <div class="board__square white-square"></div>
-    <div class="board__square black-square"></div>
-    <div class="board__square white-square"></div>
-    <div class="board__square black-square"></div>
-    <div class="board__square white-square"></div>
+  <section class="container">
+    <h1 id="turn-display">White's Turn</h1>
+  </section>
+  <div class="board-container">
+    <div class="white-pieces"></div>
+    <div class="board">
+      <!-- Row 1 -->
+      <div class="board__square white-square"></div>
+      <div class="board__square black-square"></div>
+      <div class="board__square white-square"></div>
+      <div class="board__square black-square"></div>
+      <div class="board__square white-square"></div>
+      <div class="board__square black-square"></div>
+      <div class="board__square white-square"></div>
+      <div class="board__square black-square"></div>
+      <!-- Row 2 -->
+      <div class="board__square black-square"></div>
+      <div class="board__square white-square"></div>
+      <div class="board__square black-square"></div>
+      <div class="board__square white-square"></div>
+      <div class="board__square black-square"></div>
+      <div class="board__square white-square"></div>
+      <div class="board__square black-square"></div>
+      <div class="board__square white-square"></div>
+      <!-- Row 3 -->
+      <div class="board__square white-square"></div>
+      <div class="board__square black-square"></div>
+      <div class="board__square white-square"></div>
+      <div class="board__square black-square"></div>
+      <div class="board__square white-square"></div>
+      <div class="board__square black-square"></div>
+      <div class="board__square white-square"></div>
+      <div class="board__square black-square"></div>
+      <!-- Row 4 -->
+      <div class="board__square black-square"></div>
+      <div class="board__square white-square"></div>
+      <div class="board__square black-square"></div>
+      <div class="board__square white-square"></div>
+      <div class="board__square black-square"></div>
+      <div class="board__square white-square"></div>
+      <div class="board__square black-square"></div>
+      <div class="board__square white-square"></div>
+      <!-- Row 5 -->
+      <div class="board__square white-square"></div>
+      <div class="board__square black-square"></div>
+      <div class="board__square white-square"></div>
+      <div class="board__square black-square"></div>
+      <div class="board__square white-square"></div>
+      <div class="board__square black-square"></div>
+      <div class="board__square white-square"></div>
+      <div class="board__square black-square"></div>
+      <!-- Row 6 -->
+      <div class="board__square black-square"></div>
+      <div class="board__square white-square"></div>
+      <div class="board__square black-square"></div>
+      <div class="board__square white-square"></div>
+      <div class="board__square black-square"></div>
+      <div class="board__square white-square"></div>
+      <div class="board__square black-square"></div>
+      <div class="board__square white-square"></div>
+      <!-- Row 7 -->
+      <div class="board__square white-square"></div>
+      <div class="board__square black-square"></div>
+      <div class="board__square white-square"></div>
+      <div class="board__square black-square"></div>
+      <div class="board__square white-square"></div>
+      <div class="board__square black-square"></div>
+      <div class="board__square white-square"></div>
+      <div class="board__square black-square"></div>
+      <!-- Row 8 -->
+      <div class="board__square black-square"></div>
+      <div class="board__square white-square"></div>
+      <div class="board__square black-square"></div>
+      <div class="board__square white-square"></div>
+      <div class="board__square black-square"></div>
+      <div class="board__square white-square"></div>
+      <div class="board__square black-square"></div>
+      <div class="board__square white-square"></div>
+    </div>
+    <div class='black-pieces'></div>
   </div>
 </body>
 </html>

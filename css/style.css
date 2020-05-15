@@ -7,6 +7,14 @@ body.greyscale {
   --dark-square-highlight: #99994Ad0;
 }
 
+.white-pieces i {
+  margin: 0 5px 5px 5px;
+}
+
+.black-pieces i {
+  margin: 5px 5px 0 5px;
+}
+
 .board {
   background-color: var(--light-square);
   width: 600px;
@@ -29,6 +37,7 @@ body {
 
 h1 {
   color: #1f1f1f;
+  font-size: 2em;
 }
 
 .board__square.black-square {
@@ -84,4 +93,39 @@ i.shaker {
   80% { transform: translate(-4px, -4px) rotate(4deg); }
   90% { transform: translate(4px, 8px) rotate(0deg); }
   100% { transform: translate(4px, -8px) rotate(-4deg); }
+}
+
+
+
+.winner {
+  display: flex;
+  position: absolute;
+  justify-content: center;
+  align-items: center;
+  background-color: #1f1f1fd0;
+  z-index: 2;
+  height: 100vh;
+  width: 100%;
+}
+
+.winner__display {
+  padding: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background-color: #CCCCCCd0;
+}
+
+button {
+  border: none;
+  background-color: #333333;
+  color: #EEEEEE;
+  font-size: 1.5em;
+  padding: 5px;
+  border-radius: 10px;
+}
+
+.hidden {
+  display: none;
 }
