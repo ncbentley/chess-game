@@ -781,8 +781,6 @@ class Queen extends Piece {
   }
 }
 
-
-
 const start = () => {
   const squares = $('.board__square');
   // Clear the DOM and the board object
@@ -825,7 +823,6 @@ const start = () => {
   new Knight([7, 6], 'white');
   new Rook([7, 7], 'white');
 }
-
 
 $(function() {
   start();
