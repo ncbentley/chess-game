@@ -41,7 +41,7 @@ const board = {
         }
       });
       if (moves.length === 0) {
-        this.displayWin(color === 'white' ? 'white' : 'black');
+        this.displayWin(color === 'white' ? 'black' : 'white');
       }
       return moves.length === 0;
     }
